@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool isPrime(int n) {
+    if (n < 2) return false;
+    for (int i = 2; i <= sqrt(n); i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int createBlumNumbers(int N, int blum[], int prime[], int prime_count) {
+    int blum_count = 0;
+    for (int i = 0; i < prime_count; i++) {
+        for (int j = i; j < prime_count; j++) {
+            int blum_number = prime[i] * prime[j];
+            if (blum_number < N) {
+                blum[blum_count++] = blum_number;
+            } else {
+                break;
+            }
+        }
+    }
+    return blum_count;
+}
+
+bool isBlum(int M, int blum[], int blum_count) {
+    for (int i = 0; i < blum_count; i++) {
+        if (blum[i] == M) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void findBlumPairs(int blum[], int blum_count, int N) {
+    for (int i = 0; i < blum_count; i++) {
+        for (int j = i; j < blum_count; j++) {
+            int sum = blum[i] + blum[j];
+            if (sum < N && isBlum(sum, blum, blum_count)) {
+                printf("%d + %d = %d\n", blum[i], blum[j], sum);
+            }
+        }
+    }
+}
+
+int main() {
+    int N, M;
+    printf("Nhập N: ");
+    scanf("%d", &N);
+    printf("Nhập M: ");
+    scanf("%d", &M);
+
+    int prime[N], prime_count = 0;
+    for (int i = 3; i < N; i += 2) {
+        if (isPrime(i)) {
+            prime[prime_count++] = i;
+        }
+    }
+
+    int blum[N], blum_count;
+    blum_count = createBlumNumbers(N, blum, prime, prime_count);
+
+    for (int i = 0; i < blum_count; i++) {
+        printf("%d ", blum[i]);
+    }
+    printf("\n");
+
+    findBlumPairs(blum, blum_count, N);
+
+    if (isBlum(M, blum, blum_count)) {
+        printf("%d là số Blum\n", M);
+    } else {
+        printf("%d không phải là số Blum\n", M);
+    }
+
+    return 0;
+}
